@@ -91,7 +91,7 @@ def update_resource_quota(allowable_pods, args):
         if not args.testing:
             # Apply the resource quota using kubectl
             subprocess.run(
-                ["kubectl", "apply", "-f", PATH_TO_RESOURCE_QUOTA],
+                ["kubectl", "apply", "-f", PATH_TO_RESOURCE_QUOTA, "-n", NAMESPACE],
                 check=True,
                 text=True
             )
@@ -113,6 +113,7 @@ def main():
     parser.add_argument("--max-pods", type=int, default=10, help="Maximum number of executors (pods)")
     parser.add_argument("--interval", type=int, default=15 * 60, help="Heartbeat interval in seconds")
     parser.add_argument("--testing", type=bool, default=False, help="Testing mode (no kubectl commands)")
+    parser.add_argument("--run-once", type=bool, default=False, help="Update the resource quota once and exit (e.g., for using with cron)")
 
     args = parser.parse_args()
 
@@ -165,8 +166,11 @@ def main():
         else:
             print("Skipping update due to failed data fetch.")
 
-        print(f"Sleeping for {INTERVAL // 60} minutes...")
-        time.sleep(INTERVAL)
+        if args.run_once:
+            exit(0)
+        else:
+            print(f"Sleeping for {INTERVAL // 60} minutes...")
+            time.sleep(INTERVAL)
 
 if __name__ == "__main__":
     main()
