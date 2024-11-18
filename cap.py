@@ -14,8 +14,6 @@ PATH_TO_RESOURCE_QUOTA = "resource_quota.yaml"
 API_DOMAIN = "http://127.0.0.1:6066"
 API_CI_ENDPOINT = API_DOMAIN + "/get_carbon_intensity"
 API_REGISTER_ENDPOINT = API_DOMAIN + "/register"
-B = 2  # Minimum number of executors (pods)
-K = 10  # Maximum number of executors (pods)
 INTERVAL = 1 * 60  # Interval in seconds (15 minutes)
 
 # Validate if the name is a lowercase RFC 1123 subdomain
@@ -55,7 +53,7 @@ def fetch_carbon_intensity(user_id):
 
 
 # Thresholding logic to determine the number of allowable pods
-def calculate_allowable_pods(c_t, L, U):
+def calculate_allowable_pods(c_t, L, U, B, K):
     controllable_k = K - B
     # increase L slightly to improve responsiveness
     L = L * 1.1
@@ -159,7 +157,7 @@ def main():
 
         if c_t is not None:
             print(f"Carbon intensity - Current: {c_t}, Forecasted low: {L}, Forecasted high: {U}")
-            allowable_pods = calculate_allowable_pods(c_t, L, U)
+            allowable_pods = calculate_allowable_pods(c_t, L, U, B, K)
 
             print(f"Calculated allowable pods: {allowable_pods}")
             update_resource_quota(allowable_pods, args)
