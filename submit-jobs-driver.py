@@ -37,6 +37,7 @@ def maintain_jobs(target_jobs=20):
     Keep a constant number of Spark jobs running by monitoring subprocesses.
     """
     active_jobs = []  # List of active Popen processes
+    i = 0  # Job ID counter
 
     while True:
         # Check for completed jobs
@@ -47,7 +48,8 @@ def maintain_jobs(target_jobs=20):
         # Submit new jobs to maintain the desired count
         while len(active_jobs) < target_jobs:
             print("Active jobs:", len(active_jobs), " Submitting one new job...")
-            new_job = submit_spark_job()
+            new_job = submit_spark_job(i)
+            i += 1
             active_jobs.append(new_job)
             time.sleep(1)  # Small delay to avoid overloading
 
