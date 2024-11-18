@@ -19,11 +19,17 @@ COMMAND_TEMPLATE = [
     "local:///opt/spark/examples/jars/spark-examples_2.12-3.5.3.jar", "100"
 ]
 
-def submit_spark_job():
+
+def submit_spark_job(job_id):
     """
-    Start a spark-submit process and return the Popen object.
+    Start a spark-submit process and redirect output to a log file.
     """
-    process = subprocess.Popen(COMMAND_TEMPLATE)
+    log_file = open(f"logs/spark_job_{job_id}.log", "w")  # Create a log file for each job
+    process = subprocess.Popen(
+        COMMAND_TEMPLATE,
+        stdout=log_file,
+        stderr=log_file
+    )
     return process
 
 def maintain_jobs(target_jobs=20):
