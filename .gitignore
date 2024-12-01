@@ -6,6 +6,9 @@ __pycache__/
 # logs
 logs/
 
+# old_results
+old_results/
+
 # C extensions
 *.so
 

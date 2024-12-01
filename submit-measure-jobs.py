@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import time
 
-SPARK_SUBMIT_PATH = "/Users/adam/spark-3.5.3-bin-spark-test/bin/spark-submit"
+SPARK_SUBMIT_PATH = "./spark/bin/spark-submit"
 K8S_CLUSTER_URL = "k8s://https://127.0.0.1:51159"
 
 # Global dictionary to store job start and end times
@@ -142,12 +142,17 @@ def maintain_jobs(target_jobs=3):
                         driver_pod = line.split("Pod/")[1]
                         if driver_pod in job_driver_pods.keys():
                             job_id = job_driver_pods[driver_pod]
-                            job_carbon_footprint[job_id] += get_carbon_intensity()*0.5
+                            job_carbon_footprint[job_id] += get_carbon_intensity()*0.1
                         else:
                             print("Driver pod not found in job_driver_pods") 
 
         # Short sleep before re-checking the active jobs
-        time.sleep(30)                                        
+        time.sleep(10)
+
+    if completed_jobs >= 20:
+        print("All jobs have completed.")
+        print("Writing logs to CSV...")
+        write_log_to_csv()                                        
 
 def write_log_to_csv():
     # get the current datetime in iso format
@@ -164,6 +169,10 @@ def write_log_to_csv():
                 'end_time': times['end_time'],
                 'carbon_footprint': job_carbon_footprint.get(job_id, 0)
             })
+    # after I write the log to a csv, I should run "kubectl delete pods --all -n spark-ns" to clean up the pods
+    # that were created by the spark jobs
+    print("Deleting all pods in the spark-ns namespace...")
+    subprocess.run(["kubectl", "delete", "pods", "--all", "-n", "spark-ns"], check=True)
 
 if __name__ == "__main__":
     try:

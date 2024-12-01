@@ -83,7 +83,7 @@ def update_resource_quota(allowable_execs, args):
 
         # Update the allowable pods
         resource_quota["spec"]["hard"]["cpu"] = str(allowable_execs * 1) # 1 cpu core per exec
-        resource_quota["spec"]["hard"]["memory"] = str(allowable_execs * 1) + "Gi" # 1Gi memory per exec
+        resource_quota["spec"]["hard"]["memory"] = str(allowable_execs * 2) + "Gi" # 1Gi memory per exec
 
         # Save the updated resource quota definition back to the YAML file
         with open(PATH_TO_RESOURCE_QUOTA, "w") as f:
