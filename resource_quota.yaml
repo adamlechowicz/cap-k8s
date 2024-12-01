@@ -4,4 +4,5 @@ metadata:
   name: spark-cap
 spec:
   hard:
-    pods: '2'
+    cpu: '15'
+    memory: 20Gi

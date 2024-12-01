@@ -53,8 +53,10 @@ def fetch_carbon_intensity(user_id):
 
 
 # Thresholding logic to determine the number of allowable pods
-def calculate_allowable_pods(c_t, L, U, B, K):
-    controllable_k = K - B
+def calculate_allowable_pods(c_t, L, U, B, driver_pods, K):
+    controllable_k = K - B - driver_pods
+    if controllable_k <= 0:
+        return K
     # increase L slightly to improve responsiveness
     L = L * 1.1
     # solve for alpha (competitive ratio for k-search)
@@ -73,14 +75,15 @@ def calculate_allowable_pods(c_t, L, U, B, K):
     
 
 # Update the Kubernetes resource quota
-def update_resource_quota(allowable_pods, args):
+def update_resource_quota(allowable_execs, args):
     try:
         # Load the existing resource quota definition from the YAML file
         with open(PATH_TO_RESOURCE_QUOTA, "r") as f:
             resource_quota = yaml.safe_load(f)
 
         # Update the allowable pods
-        resource_quota["spec"]["hard"]["pods"] = str(allowable_pods)
+        resource_quota["spec"]["hard"]["cpu"] = str(allowable_execs * 1) # 1 cpu core per exec
+        resource_quota["spec"]["hard"]["memory"] = str(allowable_execs * 1) + "Gi" # 1Gi memory per exec
 
         # Save the updated resource quota definition back to the YAML file
         with open(PATH_TO_RESOURCE_QUOTA, "w") as f:
@@ -93,12 +96,22 @@ def update_resource_quota(allowable_pods, args):
                 check=True,
                 text=True
             )
-        print(f"Updated resource quota: {allowable_pods} pods allowed.")
+        print(f"Updated resource quota: {allowable_execs} executors allowed.")
     except subprocess.CalledProcessError as e:
         print(f"Error updating resource quota: {e}")
     except Exception as e:
         print(f"Unexpected error: {e}")
 
+def get_driver_pods():
+    result = subprocess.run(["kubectl", "get", "pods", "-n", "spark-ns"], capture_output=True, text=True)
+    output = result.stdout.splitlines()
+    driver_pods = 0
+    for line in output:
+        if "-driver" in line:
+            if "Completed" not in line and "Error" not in line:
+                driver_pods += 1
+    print(f"Current driver pods: {driver_pods}")
+    return driver_pods
 
 # Main function to run the script
 def main():
@@ -107,8 +120,8 @@ def main():
     parser.add_argument("--namespace", required=True, help="Kubernetes namespace")
     parser.add_argument("--res-quota-path", required=True, help="Path to the resource quota YAML file")
     parser.add_argument("--api-domain", required=True, help="Domain for the carbon intensity API")
-    parser.add_argument("--min-pods", type=int, default=2, help="Minimum number of executors (pods)")
-    parser.add_argument("--max-pods", type=int, default=10, help="Maximum number of executors (pods)")
+    parser.add_argument("--min-execs", type=int, default=2, help="Minimum number of executors allowed")
+    parser.add_argument("--max-execs", type=int, default=10, help="Maximum number of executors allowed")
     parser.add_argument("--interval", type=int, default=15 * 60, help="Heartbeat interval in seconds")
     parser.add_argument("--testing", type=bool, default=False, help="Testing mode (no kubectl commands)")
     parser.add_argument("--run-once", type=bool, default=False, help="Update the resource quota once and exit (e.g., for using with cron)")
@@ -118,8 +131,8 @@ def main():
     NAMESPACE = args.namespace
     PATH_TO_RESOURCE_QUOTA = args.res_quota_path
     API_DOMAIN = args.api_domain
-    B = args.min_pods
-    K = args.max_pods
+    B = args.min_execs
+    K = args.max_execs
     INTERVAL = args.interval
 
     API_CI_ENDPOINT = f"http://{API_DOMAIN}/get_carbon_intensity"
@@ -155,9 +168,12 @@ def main():
         print("Fetching carbon intensity data...")
         c_t, L, U = fetch_carbon_intensity(user_id)
 
+        # check the current number of driver pods
+        driver_pods = get_driver_pods()
+
         if c_t is not None:
             print(f"Carbon intensity - Current: {c_t}, Forecasted low: {L}, Forecasted high: {U}")
-            allowable_pods = calculate_allowable_pods(c_t, L, U, B, K)
+            allowable_pods = calculate_allowable_pods(c_t, L, U, B, driver_pods, K)
 
             print(f"Calculated allowable pods: {allowable_pods}")
             update_resource_quota(allowable_pods, args)
