@@ -16,6 +16,7 @@ completed_jobs = 0
 # carbon accounting 
 INITIAL_DATETIME = datetime.fromisoformat("2022-01-31T22:00:00")
 ACTUAL_DATETIME = datetime.now()
+NUM_JOBS = 100
 
 # Load the carbon intensity data
 data_file_path = 'us-east-1.csv'  # Replace with the correct path to your CSV file
@@ -100,7 +101,7 @@ def get_carbon_intensity():
 
     return carbon_intensity
 
-def maintain_jobs(target_jobs=3):
+def maintain_jobs(target_jobs=2):
     """
     Keep a constant number of Spark jobs running by monitoring subprocesses.
     """
@@ -108,7 +109,7 @@ def maintain_jobs(target_jobs=3):
     active_jobs = {}  # Dict of active Popen processes
     i = 0  # Job ID counter
 
-    while completed_jobs < 20:
+    while completed_jobs < NUM_JOBS:
         # Check for completed jobs
         for job_id, job in list(active_jobs.items()):  # Iterate over a copy of the dict items
             if job_id not in job_driver_pods.values():
@@ -149,7 +150,7 @@ def maintain_jobs(target_jobs=3):
         # Short sleep before re-checking the active jobs
         time.sleep(10)
 
-    if completed_jobs >= 20:
+    if completed_jobs >= NUM_JOBS:
         print("All jobs have completed.")
         print("Writing logs to CSV...")
         write_log_to_csv()                                        

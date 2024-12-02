@@ -96,5 +96,5 @@ spec:
       serviceAccountName: scheduler-plugins-controller
       containers:
       - name: scheduler-plugins-controller
-        image: alechowicz/controller:v20241201-v0.30.6-19-g61af19a5
+        image: alechowicz/controller:v20241202-v0.30.6-19-g61af19a5
         imagePullPolicy: IfNotPresent

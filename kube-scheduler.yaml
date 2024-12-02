@@ -17,7 +17,7 @@ spec:
     - --kubeconfig=/etc/kubernetes/scheduler.conf
     - --leader-elect=true
     - --config=/etc/kubernetes/sched-cc.yaml
-    image: alechowicz/kube-scheduler:v20241201-v0.30.6-19-g61af19a5
+    image: alechowicz/kube-scheduler:v20241202-v0.30.6-19-g61af19a5
     imagePullPolicy: IfNotPresent
     livenessProbe:
       failureThreshold: 8

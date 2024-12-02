@@ -10,7 +10,7 @@ import os
 
 # Constants (defaults)
 NAMESPACE = "spark-ns"
-PATH_TO_RESOURCE_QUOTA = "resource_quota.yaml"
+PATH_TO_RESOURCE_QUOTA = "/Users/adam/GitHub/cap-k8s/resource_quota.yaml"
 API_DOMAIN = "http://127.0.0.1:6066"
 API_CI_ENDPOINT = API_DOMAIN + "/get_carbon_intensity"
 API_REGISTER_ENDPOINT = API_DOMAIN + "/register"
