@@ -6,6 +6,7 @@ import time
 import argparse
 from tqdm import tqdm
 import pytz
+import os
 
 utc = pytz.UTC
 
@@ -29,6 +30,7 @@ parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to
 parser.add_argument('--model-name', type=str, default="default", help='Name of scheduler to use')
 parser.add_argument('--target-running-jobs', type=int, default=2, help='Target number of running jobs')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
+parser.add_argument('--job-type', type=str, default="sparktc", help='Type of job to run')
 parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
 args = parser.parse_args()
 
@@ -36,6 +38,7 @@ NUM_JOBS = args.num_jobs
 TARGET_RUNNING_JOBS = args.target_running_jobs
 MODEL_NAME = args.model_name
 data_file_path = args.carbon_trace
+job_type = args.job_type
 tag = args.tag
 
 pbar = tqdm(total=NUM_JOBS)  # Set the total number of iterations if known
@@ -197,7 +200,16 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
 def write_log_to_csv():
     # get the current datetime in iso format
     current_datetime = datetime.now().isoformat()
-    filename = f"job_times_{MODEL_NAME}_{NUM_JOBS}_{tag}.csv"
+
+    # want to save the file in a folder results/{MODEL_NAME}/{JOB_TYPE}_{NUM_JOBS}/times_{tag}.csv
+    # folder results and results/{MODEL_NAME} should already exist
+    # JOB_TYPE_NUM_JOBS folder should be created if it doesn't exist, do that first
+    try:
+        os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}")
+    except FileExistsError:
+        pass
+    
+    filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}/times_{tag}.csv"
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['job_id', 'start_time', 'end_time', 'carbon_footprint', 'executors']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
