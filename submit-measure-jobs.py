@@ -10,7 +10,7 @@ import pytz
 utc = pytz.UTC
 
 SPARK_SUBMIT_PATH = "./spark/bin/spark-submit"
-K8S_CLUSTER_URL = "k8s://https://127.0.0.1:51159"
+K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
 
 # Global dictionary to store job start and end times
 job_times = {}
@@ -29,12 +29,14 @@ parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to
 parser.add_argument('--model-name', type=str, default="default", help='Name of scheduler to use')
 parser.add_argument('--target-running-jobs', type=int, default=2, help='Target number of running jobs')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
+parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
 args = parser.parse_args()
 
 NUM_JOBS = args.num_jobs
 TARGET_RUNNING_JOBS = args.target_running_jobs
 MODEL_NAME = args.model_name
 data_file_path = args.carbon_trace
+tag = args.tag
 
 pbar = tqdm(total=NUM_JOBS)  # Set the total number of iterations if known
 
@@ -51,10 +53,11 @@ COMMAND_TEMPLATE = [
     "--deploy-mode", "cluster",
     "--name", "spark-pr",
     "--class", "org.apache.spark.examples.SparkTC",
-    "--conf", "spark.executor.instances=2",
-    "--conf", "spark.kubernetes.container.image=spark:spark-kb8",
+    "--conf", "spark.kubernetes.container.image=alechowicz/spark:spark-kb8",
     "--conf", "spark.kubernetes.container.image.pullPolicy=IfNotPresent",
     "--conf", "spark.kubernetes.authenticate.driver.serviceAccountName=spark",
+    "--conf", "spark.executor.cores=6",
+    "--conf", "spark.executor.memory=7g",
     "--conf", "spark.dynamicAllocation.enabled=True",
     "--conf", "spark.dynamicAllocation.shuffleTracking.enabled=True",
     "--conf", "spark.kubernetes.namespace=spark-ns",
@@ -194,7 +197,7 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
 def write_log_to_csv():
     # get the current datetime in iso format
     current_datetime = datetime.now().isoformat()
-    filename = f"job_times_{MODEL_NAME}_{NUM_JOBS}.csv"
+    filename = f"job_times_{MODEL_NAME}_{NUM_JOBS}_{tag}.csv"
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['job_id', 'start_time', 'end_time', 'carbon_footprint', 'executors']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

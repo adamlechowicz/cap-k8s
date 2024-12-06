@@ -6,7 +6,7 @@ import time
 # use argparse
 parser = argparse.ArgumentParser(description='Run experiments on Spark.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
-parser.add_argument('--carbon-trace', type=str, default="us-east-1.csv", help='Carbon trace to use')
+parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 args = parser.parse_args()
 
 # check to make sure carbon trace file exists
@@ -20,7 +20,7 @@ except FileNotFoundError:
 MODELS = ["default", "cap", "danish", "decima"]
 processes = []
 
-def run_experiment(model_name):
+def run_experiment(model_name, i):
     global processes
     num_jobs = args.num_jobs
     print(f"Running {num_jobs} jobs with model {model_name}")
@@ -56,7 +56,7 @@ def run_experiment(model_name):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", "2", "--carbon-trace", args.carbon_trace],
+        ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", "2", "--carbon-trace", args.carbon_trace, "--tag", f"{i}"],
     )
 
     # wait for the experiment to finish
@@ -70,11 +70,13 @@ def run_experiment(model_name):
     return
     
 if __name__ == "__main__":
+    num_to_avg = 10
     for model in MODELS:
-        run_experiment(model)
-        # add a delay of at least 1 minute between experiments
-        print("Sleeping for 1 minute...")
-        time.sleep(60)
+        for i in range(num_to_avg):
+            run_experiment(model, i)
+            # add a delay of 10 seconds between experiments
+            print("Sleeping for 10 seconds...")
+            time.sleep(10)
     print("All experiments completed.")
     exit(0)
 
