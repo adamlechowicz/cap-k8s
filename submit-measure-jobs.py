@@ -10,7 +10,7 @@ import os
 
 utc = pytz.UTC
 
-SPARK_SUBMIT_PATH = "./spark/bin/spark-submit"
+SPARK_SUBMIT_PATH = "/home/cc/cap-k8s/spark/bin/spark-submit"
 K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
 
 # Global dictionary to store job start and end times
@@ -56,7 +56,7 @@ COMMAND_TEMPLATE = [
     "--deploy-mode", "cluster",
     "--name", "spark-pr",
     "--class", "org.apache.spark.examples.SparkTC",
-    "--conf", "spark.kubernetes.container.image=alechowicz/spark:spark-kb8",
+    "--conf", "spark.kubernetes.container.image=alechowicz/spark:spark-k8b",
     "--conf", "spark.kubernetes.container.image.pullPolicy=IfNotPresent",
     "--conf", "spark.kubernetes.authenticate.driver.serviceAccountName=spark",
     "--conf", "spark.executor.cores=6",
