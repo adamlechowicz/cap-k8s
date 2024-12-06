@@ -1,3 +1,6 @@
+SPARK_SUBMIT_PATH = "/home/cc/cap-k8s/spark/bin/spark-submit"
+K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
+
 # Define the Spark submit command template
 SPARKTC_COMMAND_TEMPLATE = [
     SPARK_SUBMIT_PATH,
