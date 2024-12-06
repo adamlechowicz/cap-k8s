@@ -63,6 +63,7 @@ COMMAND_TEMPLATE = [
     "--conf", "spark.executor.memory=7g",
     "--conf", "spark.dynamicAllocation.enabled=True",
     "--conf", "spark.dynamicAllocation.shuffleTracking.enabled=True",
+    "--conf", "spark.dynamicAllocation.maxExecutors=20",
     "--conf", "spark.kubernetes.namespace=spark-ns",
     "local:///opt/spark/examples/jars/spark-examples_2.12-3.5.3.jar",
 ]

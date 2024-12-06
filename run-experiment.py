@@ -47,7 +47,7 @@ def run_experiment(model_name, i):
         print("Starting CAP agent...")
         cap_log = open("logs/cap_agent.log", "w")
         processes.append(subprocess.Popen(
-            ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/Users/adam/GitHub/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "4", "--max-execs", "10", "--interval", "60"],
+            ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/Users/adam/GitHub/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60"],
             stdout=cap_log,
             stderr=cap_log
         ))
