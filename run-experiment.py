@@ -29,7 +29,7 @@ def run_experiment(model_name, i):
     print("Starting flask server...")
     flask_log = open(f"logs/flask_{model_name}.log", "w")
     processes.append(subprocess.Popen(
-        ["/opt/homebrew/Caskroom/miniforge/base/envs/carbonDAG/bin/python", "/Users/adam/flask-testing/test.py", "--model-name", model_name, "--carbon-trace", args.carbon_trace],
+        ["python3", "/home/cc/flask-driver/test.py", "--model-name", model_name, "--carbon-trace", args.carbon_trace],
         stdout=flask_log,
         stderr=flask_log
     ))
@@ -39,7 +39,7 @@ def run_experiment(model_name, i):
         print("Starting carbon intensity server...")
         carbon_log = open("logs/carbon_intensity_server.log", "w")
         processes.append(subprocess.Popen(
-            ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/carbon-intensity-API-sim/carbonServer.py", "--carbon-trace", args.carbon_trace],
+            ["python3", "/home/cc/carbon-intensity-api-sim/carbonServer.py", "--carbon-trace", args.carbon_trace],
             stdout=carbon_log,
             stderr=carbon_log
         ))
@@ -47,7 +47,7 @@ def run_experiment(model_name, i):
         print("Starting CAP agent...")
         cap_log = open("logs/cap_agent.log", "w")
         processes.append(subprocess.Popen(
-            ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/Users/adam/GitHub/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60"],
+            ["python3", "/home/cc/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/home/cc/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60"],
             stdout=cap_log,
             stderr=cap_log
         ))
@@ -56,7 +56,7 @@ def run_experiment(model_name, i):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["/opt/homebrew/Caskroom/miniforge/base/bin/python", "/Users/adam/GitHub/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", "2", "--carbon-trace", args.carbon_trace, "--tag", f"{i}"],
+        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", "2", "--carbon-trace", args.carbon_trace, "--tag", f"{i}"],
     )
 
     # wait for the experiment to finish
