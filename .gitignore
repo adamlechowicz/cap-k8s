@@ -7,7 +7,7 @@ __pycache__/
 logs/
 
 # old_results
-old_results/
+MBP_exp/
 
 # C extensions
 *.so

@@ -82,8 +82,8 @@ def update_resource_quota(allowable_execs, args):
             resource_quota = yaml.safe_load(f)
 
         # Update the allowable pods
-        resource_quota["spec"]["hard"]["cpu"] = str(allowable_execs * 1) # 1 cpu core per exec
-        resource_quota["spec"]["hard"]["memory"] = str(allowable_execs * 2) + "Gi" # 1Gi memory per exec
+        resource_quota["spec"]["hard"]["cpu"] = str(allowable_execs * 4) # 3 cpu cores per exec, 1 for driver
+        resource_quota["spec"]["hard"]["memory"] = str(allowable_execs * 8) + "Gi" # 7GB memory per exec, plus 1GB for driver
 
         # Save the updated resource quota definition back to the YAML file
         with open(PATH_TO_RESOURCE_QUOTA, "w") as f:

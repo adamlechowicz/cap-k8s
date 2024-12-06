@@ -1,0 +1,57 @@
+# apiVersion: sparkoperator.k8s.io/v1beta2
+# kind: SparkApplication
+# metadata:
+#   name: spark-pi
+#   namespace: spark-ns
+# spec:
+#   type: Scala
+#   mode: cluster
+#   image: spark:base-spark
+#   imagePullPolicy: IfNotPresent
+#   mainClass: org.apache.spark.examples.SparkTC
+#   mainApplicationFile: local:///opt/spark/examples/jars/spark-examples.jar
+#   arguments:
+#   - "5000"
+#   sparkVersion: 3.5.3
+#   driver:
+#     labels:
+#       version: 3.5.3
+#     cores: 1
+#     memory: 512m
+#     serviceAccount: spark
+#   executor:
+#     labels:
+#       version: 3.5.3
+#     instances: 1
+#     cores: 1
+#     memory: 512m
+
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-pi
+  namespace: spark-ns
+spec:
+  type: Scala
+  mode: cluster
+  restartPolicy:
+    type: OnFailure
+  image: spark:base-spark
+  imagePullPolicy: IfNotPresent
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: local:///opt/spark/examples/jars/spark-examples.jar
+  arguments:
+  - "5000"
+  sparkVersion: 3.5.3
+  driver:
+    labels:
+      version: 3.5.3
+    cores: 1
+    memory: 512m
+    serviceAccount: spark-operator-spark
+  executor:
+    labels:
+      version: 3.5.3
+    instances: 1
+    cores: 1
+    memory: 512m
