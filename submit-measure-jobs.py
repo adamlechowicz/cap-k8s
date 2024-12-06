@@ -28,7 +28,7 @@ parser = argparse.ArgumentParser(description='Submit Spark jobs and track carbon
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
 parser.add_argument('--model-name', type=str, default="default", help='Name of scheduler to use')
 parser.add_argument('--target-running-jobs', type=int, default=2, help='Target number of running jobs')
-parser.add_argument('--carbon-trace', type=str, default="us-east-1.csv", help='Carbon trace to use')
+parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 args = parser.parse_args()
 
 NUM_JOBS = args.num_jobs
