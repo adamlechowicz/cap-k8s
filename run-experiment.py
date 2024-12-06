@@ -71,8 +71,8 @@ def run_experiment(model_name, i):
     
 if __name__ == "__main__":
     num_to_avg = 10
-    for model in MODELS:
-        for i in range(num_to_avg):
+    for i in range(num_to_avg):
+        for model in MODELS:
             run_experiment(model, i)
             # add a delay of 10 seconds between experiments
             print("Sleeping for 10 seconds...")
