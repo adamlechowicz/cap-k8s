@@ -7,6 +7,7 @@ import argparse
 from tqdm import tqdm
 import pytz
 import os
+from commands import COMMAND_TEMPLATES
 
 utc = pytz.UTC
 
@@ -49,33 +50,14 @@ carbon_data['datetime'] = pd.to_datetime(carbon_data['datetime'])  # Ensure time
 # make the datetime column the index
 carbon_data.set_index('datetime', inplace=True)
 
-# Define the Spark submit command template
-COMMAND_TEMPLATE = [
-    SPARK_SUBMIT_PATH,
-    "--master", K8S_CLUSTER_URL,
-    "--deploy-mode", "cluster",
-    "--name", "spark-pr",
-    "--class", "org.apache.spark.examples.SparkTC",
-    "--conf", "spark.kubernetes.container.image=alechowicz/spark:spark-k8b",
-    "--conf", "spark.kubernetes.container.image.pullPolicy=IfNotPresent",
-    "--conf", "spark.kubernetes.authenticate.driver.serviceAccountName=spark",
-    "--conf", "spark.executor.cores=6",
-    "--conf", "spark.executor.memory=7g",
-    "--conf", "spark.dynamicAllocation.enabled=True",
-    "--conf", "spark.dynamicAllocation.shuffleTracking.enabled=True",
-    "--conf", "spark.dynamicAllocation.maxExecutors=20",
-    "--conf", "spark.kubernetes.namespace=spark-ns",
-    "local:///opt/spark/examples/jars/spark-examples_2.12-3.5.3.jar",
-]
-
-
 def submit_spark_job(job_id):
+    global job_type
     """
     Submit a Spark job and return the process handle.
     """
     log_file = open(f"logs/job_{job_id}.log", "w")
     process = subprocess.Popen(
-        COMMAND_TEMPLATE,
+        COMMAND_TEMPLATES[job_type],
         stdout=log_file,
         stderr=log_file
     )
