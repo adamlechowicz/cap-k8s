@@ -141,11 +141,11 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
     i = 0  # Job ID counter
     original_target_jobs = target_jobs
 
-    while completed_jobs < NUM_JOBS:
-        # initialize last_submission_time to some time in the past
-        last_submission_time = datetime.now() - timedelta(minutes=5)
-        interarrival_time = timedelta(minutes=0)
+    # initialize last_submission_time to some time in the past
+    last_submission_time = datetime.now() - timedelta(minutes=5)
+    interarrival_time = timedelta(minutes=0)
 
+    while completed_jobs < NUM_JOBS:
         # Check for completed jobs
         for job_id, job in list(active_jobs.items()):  # Iterate over a copy of the dict items
             if job_id not in job_driver_pods.values():
