@@ -57,7 +57,7 @@ def run_experiment(model_name, i):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", f"{min(10, num_jobs)}", "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type],
+        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type],
     )
 
     # wait for the experiment to finish

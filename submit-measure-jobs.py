@@ -27,14 +27,12 @@ ACTUAL_DATETIME = datetime.now()
 parser = argparse.ArgumentParser(description='Submit Spark jobs and track carbon footprint.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
 parser.add_argument('--model-name', type=str, default="default", help='Name of scheduler to use')
-parser.add_argument('--target-running-jobs', type=int, default=2, help='Target number of running jobs')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
 args = parser.parse_args()
 
 NUM_JOBS = args.num_jobs
-TARGET_RUNNING_JOBS = args.target_running_jobs
 MODEL_NAME = args.model_name
 LAMBDA = 1/10  # job submission rate for Poisson process
 data_file_path = args.carbon_trace
@@ -132,14 +130,13 @@ def get_carbon_intensity():
 
     return carbon_intensity
 
-def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
+def maintain_jobs():
     """
     Keep a constant number of Spark jobs running by monitoring subprocesses.
     """
     global completed_jobs, executor_tracking, job_driver_pods, job_times, job_carbon_footprint
     active_jobs = {}  # Dict of active Popen processes
     i = 0  # Job ID counter
-    original_target_jobs = target_jobs
 
     # initialize last_submission_time to some time in the past
     last_submission_time = datetime.now() - timedelta(minutes=5)
@@ -153,15 +150,13 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
             if job.poll() is not None:  # Process has completed
                 # look to see whether the job completed successfully
                 if job.returncode != 0:
-                    # implement a backoff strategy -- if jobs are failing, decrement target_jobs
-                    target_jobs = max(1, target_jobs - 1)
+                    # if the job failed, submit another one to make up for it
+                    interarrival_time = timedelta(seconds=0)
                     del active_jobs[job_id]
                     del job_times[job_id]
                     del job_carbon_footprint[job_id]
                 else: 
                     completed_jobs += 1
-                    # if jobs are completing successfully, increment target_jobs (up to the original value)
-                    target_jobs = min(original_target_jobs, target_jobs + 1)
                     pbar.update(1)  # Update the progress bar manually
                     job_times[job_id]['end_time'] = datetime.now()  # Log the end time
                     del active_jobs[job_id]
