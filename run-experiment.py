@@ -78,6 +78,9 @@ if __name__ == "__main__":
             # add a delay of 10 seconds between experiments
             print("Sleeping for 10 seconds...")
             time.sleep(10)
+            # just to be sure, clear the namespace of all pods again
+            print("Deleting all pods in the spark-ns namespace...")
+            subprocess.run(["kubectl", "delete", "pods", "--all", "-n", "spark-ns"], check=True)
     print("All experiments completed.")
     exit(0)
 
