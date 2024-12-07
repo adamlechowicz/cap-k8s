@@ -37,13 +37,16 @@ TPCH_BASE_COMMAND_TEMPLATE = [
 ]
 
 # Define the TPCH 100M command template
-TPCH_100M_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy().append("local:///opt/spark/examples/jars/100m-tpc-h-queries_2.12-1.0.jar ")
+TPCH_100M_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy()
+TPCH_100M_COMMAND_TEMPLATE.append("local:///opt/spark/examples/jars/100m-tpc-h-queries_2.12-1.0.jar")
 
 # Define the TPCH 1G command template
-TPCH_1G_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy().append("local:///opt/spark/examples/jars/1g-tpc-h-queries_2.12-1.0.jar ")
+TPCH_1G_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy()
+TPCH_1G_COMMAND_TEMPLATE.append("local:///opt/spark/examples/jars/1g-tpc-h-queries_2.12-1.0.jar")
 
 # Define the TPCH 10G command template
-TPCH_10G_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy().append("local:///opt/spark/examples/jars/10g-tpc-h-queries_2.12-1.0.jar ")
+TPCH_10G_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy()
+TPCH_10G_COMMAND_TEMPLATE.append("local:///opt/spark/examples/jars/10g-tpc-h-queries_2.12-1.0.jar")
 
 COMMAND_TEMPLATES = {
     "sparktc": SPARKTC_COMMAND_TEMPLATE,
@@ -51,3 +54,5 @@ COMMAND_TEMPLATES = {
     "tpch1g": TPCH_1G_COMMAND_TEMPLATE,
     "tpch10g": TPCH_10G_COMMAND_TEMPLATE,
 }
+
+# print(COMMAND_TEMPLATES)
