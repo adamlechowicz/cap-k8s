@@ -173,7 +173,7 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
             active_jobs[i] = new_job
             i += 1
             last_submission_time = datetime.now()
-            interarrival_time = timedelta(minutes=random.expovariate(1.0 / LAMBDA))
+            interarrival_time = timedelta(minutes=random.expovariate(LAMBDA))
 
         pods = get_pods()
         for pod in pods:
