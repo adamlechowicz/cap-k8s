@@ -34,7 +34,7 @@ args = parser.parse_args()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name
-LAMBDA = 1/10  # job submission rate for Poisson process
+LAMBDA = 1/5  # job submission rate for Poisson process
 data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
@@ -222,6 +222,8 @@ def write_log_to_csv():
             })
     # after I write the log to a csv, I should run "kubectl delete pods --all -n spark-ns" to clean up the pods
     # that were created by the spark jobs
+    # wait for 10 seconds before deleting the pods
+    time.sleep(10)
     print("Deleting all pods in the spark-ns namespace...")
     subprocess.run(["kubectl", "delete", "pods", "--all", "-n", "spark-ns"])
 
