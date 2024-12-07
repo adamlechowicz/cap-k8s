@@ -223,7 +223,7 @@ def write_log_to_csv():
     # after I write the log to a csv, I should run "kubectl delete pods --all -n spark-ns" to clean up the pods
     # that were created by the spark jobs
     print("Deleting all pods in the spark-ns namespace...")
-    subprocess.run(["kubectl", "delete", "pods", "--all", "-n", "spark-ns"], check=True)
+    subprocess.run(["kubectl", "delete", "pods", "--all", "-n", "spark-ns"])
 
 if __name__ == "__main__":
     try:
