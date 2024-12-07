@@ -137,6 +137,7 @@ def maintain_jobs():
     global completed_jobs, executor_tracking, job_driver_pods, job_times, job_carbon_footprint
     active_jobs = {}  # Dict of active Popen processes
     i = 0  # Job ID counter
+    jobs_submitted = 0
 
     # initialize last_submission_time to some time in the past
     last_submission_time = datetime.now() - timedelta(minutes=5)
@@ -153,6 +154,7 @@ def maintain_jobs():
                     # if the job failed, submit another one to make up for it
                     last_submission_time = datetime.now()
                     interarrival_time = timedelta(seconds=10)
+                    jobs_submitted -= 1
                     del active_jobs[job_id]
                     del job_times[job_id]
                     del job_carbon_footprint[job_id]
@@ -163,11 +165,12 @@ def maintain_jobs():
                     del active_jobs[job_id]
 
         # Submit new jobs based on interarrival time
-        if datetime.now() - last_submission_time > interarrival_time and completed_jobs < NUM_JOBS:
+        if datetime.now() - last_submission_time > interarrival_time and jobs_submitted < NUM_JOBS:
             print("Active jobs:", len(active_jobs), " Submitting one new job...")
             new_job = submit_spark_job(i)
             active_jobs[i] = new_job
             i += 1
+            jobs_submitted += 1
             last_submission_time = datetime.now()
             interarrival_time = timedelta(minutes=random.expovariate(LAMBDA))
             print("Next job in", interarrival_time.total_seconds(), "seconds")
