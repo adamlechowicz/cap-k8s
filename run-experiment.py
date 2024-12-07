@@ -71,7 +71,7 @@ def run_experiment(model_name, i):
     return
     
 if __name__ == "__main__":
-    num_to_avg = 1
+    num_to_avg = 4
     for i in range(num_to_avg):
         for model in MODELS:
             run_experiment(model, i)
