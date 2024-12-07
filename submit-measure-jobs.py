@@ -151,7 +151,8 @@ def maintain_jobs():
                 # look to see whether the job completed successfully
                 if job.returncode != 0:
                     # if the job failed, submit another one to make up for it
-                    interarrival_time = timedelta(seconds=0)
+                    last_submission_time = datetime.now()
+                    interarrival_time = timedelta(seconds=10)
                     del active_jobs[job_id]
                     del job_times[job_id]
                     del job_carbon_footprint[job_id]
