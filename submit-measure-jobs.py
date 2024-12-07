@@ -93,8 +93,8 @@ def identify_driver_pod(job_id):
     log_file = f"logs/job_{job_id}.log"
     with open(log_file, 'r') as file:
         for line in file:
-            if "submission ID" in line:
-                driver_pod = line.split("submission ID spark-ns:")[1].split("-driver")[0] + "-driver"
+            if "pod name" in line:
+                driver_pod = line.split("pod name: ")[1].split("-driver")[0] + "-driver"
                 job_driver_pods[driver_pod] = job_id
                 print(f"Identified driver pod for job {job_id}: {driver_pod}")
                 return driver_pod
