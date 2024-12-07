@@ -162,7 +162,7 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
                     del active_jobs[job_id]
 
         # Submit new jobs to maintain the desired count
-        while len(active_jobs) < target_jobs:
+        if len(active_jobs) < target_jobs:
             print("Active jobs:", len(active_jobs), " Submitting one new job...")
             new_job = submit_spark_job(i)
             active_jobs[i] = new_job
