@@ -7,6 +7,7 @@ import time
 parser = argparse.ArgumentParser(description='Run experiments on Spark.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
+parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 args = parser.parse_args()
 
 # check to make sure carbon trace file exists
@@ -56,7 +57,7 @@ def run_experiment(model_name, i):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", f"{min(10, num_jobs)}", "--carbon-trace", args.carbon_trace, "--tag", f"{i}"],
+        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--target-running-jobs", f"{min(10, num_jobs)}", "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type],
     )
 
     # wait for the experiment to finish
