@@ -45,6 +45,9 @@ def run_experiment(model_name, i):
             stderr=carbon_log
         ))
 
+        # wait a few seconds for the carbon intensity server to start
+        time.sleep(5)
+
         print("Starting CAP agent...")
         cap_log = open("logs/cap_agent.log", "w")
         processes.append(subprocess.Popen(
