@@ -36,6 +36,7 @@ args = parser.parse_args()
 NUM_JOBS = args.num_jobs
 TARGET_RUNNING_JOBS = args.target_running_jobs
 MODEL_NAME = args.model_name
+LAMBDA = 1/2.5  # job submission rate for Poisson process
 data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
@@ -141,6 +142,10 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
     original_target_jobs = target_jobs
 
     while completed_jobs < NUM_JOBS:
+        # initialize last_submission_time to some time in the past
+        last_submission_time = datetime.now() - timedelta(minutes=5)
+        interarrival_time = timedelta(minutes=0)
+
         # Check for completed jobs
         for job_id, job in list(active_jobs.items()):  # Iterate over a copy of the dict items
             if job_id not in job_driver_pods.values():
@@ -161,14 +166,15 @@ def maintain_jobs(target_jobs=TARGET_RUNNING_JOBS):
                     job_times[job_id]['end_time'] = datetime.now()  # Log the end time
                     del active_jobs[job_id]
 
-        # Submit new jobs to maintain the desired count
-        if len(active_jobs) < target_jobs:
+        # Submit new jobs based on interarrival time
+        if datetime.now() - last_submission_time > interarrival_time and completed_jobs < NUM_JOBS:
             print("Active jobs:", len(active_jobs), " Submitting one new job...")
             new_job = submit_spark_job(i)
             active_jobs[i] = new_job
             i += 1
-            time.sleep(0.5)  # Small delay to avoid overloading
-        
+            last_submission_time = datetime.now()
+            interarrival_time = timedelta(minutes=random.expovariate(1.0 / LAMBDA))
+
         pods = get_pods()
         for pod in pods:
             if "exec" in pod and "Running" in pod:
