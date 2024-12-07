@@ -7,12 +7,10 @@ import argparse
 from tqdm import tqdm
 import pytz
 import os
+import random
 from commands import COMMAND_TEMPLATES
 
 utc = pytz.UTC
-
-SPARK_SUBMIT_PATH = "/home/cc/cap-k8s/spark/bin/spark-submit"
-K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
 
 # Global dictionary to store job start and end times
 job_times = {}
@@ -31,7 +29,7 @@ parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to
 parser.add_argument('--model-name', type=str, default="default", help='Name of scheduler to use')
 parser.add_argument('--target-running-jobs', type=int, default=2, help='Target number of running jobs')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
-parser.add_argument('--job-type', type=str, default="sparktc", help='Type of job to run')
+parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
 args = parser.parse_args()
 
@@ -56,8 +54,23 @@ def submit_spark_job(job_id):
     Submit a Spark job and return the process handle.
     """
     log_file = open(f"logs/job_{job_id}.log", "w")
+
+    # get corresponding command template
+    
+    if job_type == "tpch":
+        # randomly pick between "100m", "1g", "10g" tpch queries
+        sizeChoice = random.choice(["100m", "1g", "10g"])
+        command = COMMAND_TEMPLATES[job_type + sizeChoice]
+
+        # randomly pick the query number to run (1-22, or blank for all)
+        queryChoice = random.choice(["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"])
+        if queryChoice != "":
+            command.append(queryChoice)
+    else:
+        command = COMMAND_TEMPLATES[job_type]
+
     process = subprocess.Popen(
-        COMMAND_TEMPLATES[job_type],
+        command,
         stdout=log_file,
         stderr=log_file
     )
