@@ -1,7 +1,7 @@
 def get_command_template(model):
-    max_execs = 8
+    max_execs = 4
     if model == "cap" or model == "danish":
-        max_execs = 4
+        max_execs = 8
 
     SPARK_SUBMIT_PATH = "/home/cc/cap-k8s/spark/bin/spark-submit"
     K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
