@@ -1,5 +1,5 @@
 def get_command_template(model):
-    max_execs = 4
+    max_execs = 6
     if model == "cap" or model == "danish":
         max_execs = 8
 
