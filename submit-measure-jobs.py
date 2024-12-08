@@ -34,7 +34,7 @@ args = parser.parse_args()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name
-LAMBDA = 1/0.3  # job submission rate for Poisson process
+LAMBDA = 1/0.5  # job submission rate for Poisson process
 data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
@@ -207,10 +207,7 @@ def write_log_to_csv():
     # want to save the file in a folder results/{MODEL_NAME}/{JOB_TYPE}_{NUM_JOBS}/times_{tag}.csv
     # folder results and results/{MODEL_NAME} should already exist
     # JOB_TYPE_NUM_JOBS folder should be created if it doesn't exist, do that first
-    try:
-        os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}")
-    except FileExistsError:
-        pass
+    os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}", exist_ok=True)
     
     filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}/times_{tag}.csv"
     with open(filename, 'w', newline='') as csvfile:
