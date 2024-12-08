@@ -71,12 +71,12 @@ def run_experiment(model_name, i):
         print("Stopping all processes...")
         p.kill()
     print("Killing any outstanding port-forwarding processes...")
-    subprocess.run(["ps", "-ef", "|", "grep 'kubectl port-forward'", "|", "grep", "-v", "grep", "|", "awk", "'{print $2}'", "|", "xargs", "-r", "kill", "-9"], check=True)
+    subprocess.run(["ps", "-e", "-f", "|", "grep", "'kubectl port-forward'", "|", "grep", "-v", "grep", "|", "awk", "'{print $2}'", "|", "xargs", "-r", "kill", "-9"], check=True, shell=True)
     
     return
     
 if __name__ == "__main__":
-    num_to_avg = 4
+    num_to_avg = 1
     for i in range(num_to_avg):
         for model in MODELS:
             run_experiment(model, i)
