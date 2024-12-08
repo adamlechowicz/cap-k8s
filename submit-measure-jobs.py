@@ -8,7 +8,7 @@ from tqdm import tqdm
 import pytz
 import os
 import random
-from commands import COMMAND_TEMPLATES
+import commands
 
 utc = pytz.UTC
 
@@ -39,6 +39,7 @@ data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
 
+COMMAND_TEMPLATES = commands.get_command_template(MODEL_NAME)
 pbar = tqdm(total=NUM_JOBS)  # Set the total number of iterations if known
 
 # Load the carbon intensity data
