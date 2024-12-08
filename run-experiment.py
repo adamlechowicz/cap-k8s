@@ -71,7 +71,7 @@ def run_experiment(model_name, i):
         print("Stopping all processes...")
         p.kill()
     print("Killing any outstanding port-forwarding processes...")
-    subprocess.run(["ps -ef", "|", "grep 'kubectl port-forward'", "|", "grep", "-v", "grep", "|", "awk", "'{print $2}'", "|", "xargs", "-r", "kill", "-9"], check=True)
+    subprocess.run(["ps", "-ef", "|", "grep 'kubectl port-forward'", "|", "grep", "-v", "grep", "|", "awk", "'{print $2}'", "|", "xargs", "-r", "kill", "-9"], check=True)
     
     return
     
