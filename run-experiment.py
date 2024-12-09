@@ -66,6 +66,10 @@ def run_experiment(model_name, i):
     # wait for the experiment to finish
     exp.wait()
 
+    # send a GET request to the flask driver at /purge_proc to get rid of any port forwarding still hanging around
+    print("Purging any outstanding port-forwarding processes...")
+    subprocess.run(["curl", "http://192.168.1.10:14040/purge_proc"], check=True)
+
     # once it is done, clean up all the processes
     for p in processes:
         print("Stopping all processes...")
