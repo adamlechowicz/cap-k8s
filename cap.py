@@ -125,6 +125,7 @@ def main():
     parser.add_argument("--interval", type=int, default=15 * 60, help="Heartbeat interval in seconds")
     parser.add_argument("--testing", type=bool, default=False, help="Testing mode (no kubectl commands)")
     parser.add_argument("--run-once", type=bool, default=False, help="Update the resource quota once and exit (e.g., for using with cron)")
+    parser.add_argument('--initial-date', type=str, default='2020-01-31T18:00:00', help='Initial date for carbon intensity data')
 
     args = parser.parse_args()
 
@@ -150,7 +151,7 @@ def main():
     
     # register with the API
     # first, set the initial timestamp (in ISO format, January 31, 2020 at 6pm)
-    timestamp = "2020-01-31T18:00:00"
+    timestamp = args.initial_date
     # then, register the timestamp with the API
     payload = {"timestamp": timestamp}
     try:

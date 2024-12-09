@@ -19,10 +19,6 @@ executor_tracking = {}
 job_driver_pods = {}
 completed_jobs = 0
 
-# carbon accounting 
-INITIAL_DATETIME = datetime.fromisoformat("2022-01-31T22:00:00")
-ACTUAL_DATETIME = datetime.now()
-
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='Submit Spark jobs and track carbon footprint.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
@@ -30,7 +26,12 @@ parser.add_argument('--model-name', type=str, default="default", help='Name of s
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
+parser.add_argument('--initial-date', type=str, default='2022-01-31T22:00:00', help='Initial date for carbon intensity data')
 args = parser.parse_args()
+
+# carbon accounting 
+INITIAL_DATETIME = datetime.fromisoformat(args.initial_date).replace(tzinfo=utc)
+ACTUAL_DATETIME = datetime.now()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name

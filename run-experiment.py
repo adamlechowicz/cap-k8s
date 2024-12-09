@@ -1,6 +1,8 @@
 import subprocess
 import argparse
 import time
+import random
+from datetime import datetime, timedelta
 
 # arguments are the number of jobs
 # use argparse
@@ -9,6 +11,22 @@ parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 args = parser.parse_args()
+
+# generate random start time
+
+# Define the start and end dates
+start_date = datetime(2020, 1, 1, 0, 0, 0)
+end_date = datetime(2022, 12, 31, 23, 0, 0)
+
+# Generate a random timestamp between start_date and end_date
+random_timestamp = start_date + timedelta(seconds=random.randint(0, int((end_date - start_date).total_seconds())))
+
+# Round the timestamp to the nearest hour
+rounded_timestamp = random_timestamp.replace(minute=0, second=0, microsecond=0)
+if random_timestamp.minute >= 30:
+    rounded_timestamp += timedelta(hours=1)
+
+print(rounded_timestamp.isoformat())
 
 # check to make sure carbon trace file exists
 try:
@@ -30,7 +48,7 @@ def run_experiment(model_name, i):
     print("Starting flask server...")
     flask_log = open(f"logs/flask_{model_name}.log", "w")
     processes.append(subprocess.Popen(
-        ["python3", "/home/cc/flask-driver/test.py", "--model-name", model_name, "--carbon-trace", args.carbon_trace],
+        ["python3", "/home/cc/flask-driver/test.py", "--model-name", model_name, "--carbon-trace", args.carbon_trace, "--initial-date", rounded_timestamp.isoformat() ],
         stdout=flask_log,
         stderr=flask_log
     ))
@@ -51,7 +69,7 @@ def run_experiment(model_name, i):
         print("Starting CAP agent...")
         cap_log = open("logs/cap_agent.log", "w")
         processes.append(subprocess.Popen(
-            ["python3", "/home/cc/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/home/cc/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60"],
+            ["python3", "/home/cc/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/home/cc/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60", "--initial-date", rounded_timestamp.isoformat()],
             stdout=cap_log,
             stderr=cap_log
         ))
@@ -60,7 +78,7 @@ def run_experiment(model_name, i):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type],
+        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type, "--initial-date", rounded_timestamp.isoformat()],
     )
 
     # wait for the experiment to finish
