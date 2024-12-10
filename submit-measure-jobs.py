@@ -204,13 +204,14 @@ def maintain_jobs():
 def write_log_to_csv():
     # get the current datetime in iso format
     current_datetime = datetime.now().isoformat()
+    carbon_trace_name = args.carbon_trace.split(".")[0]
 
-    # want to save the file in a folder results/{MODEL_NAME}/{JOB_TYPE}_{NUM_JOBS}/times_{tag}.csv
+    # want to save the file in a folder results/{MODEL_NAME}/{JOB_TYPE}_{NUM_JOBS}_{CARBON_TRACE}/times_{tag}.csv
     # folder results and results/{MODEL_NAME} should already exist
-    # JOB_TYPE_NUM_JOBS folder should be created if it doesn't exist, do that first
-    os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}", exist_ok=True)
+    # JOB_TYPE_NUM_JOBS_CARBON_TRACE folder should be created if it doesn't exist, do that first
+    os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}", exist_ok=True)
     
-    filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}/times_{tag}.csv"
+    filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}/times_{tag}.csv"
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['job_id', 'start_time', 'end_time', 'carbon_footprint', 'executors']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
