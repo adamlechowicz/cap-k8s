@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description='Run experiments on Spark.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
+parser.add_argument('--num-to-avg', type=int, default=1, help='Number of times to average each experiment')
 args = parser.parse_args()
 
 # generate random start time
@@ -98,7 +99,7 @@ def run_experiment(model_name, i):
     return
     
 if __name__ == "__main__":
-    num_to_avg = 1
+    num_to_avg = args.num_to_avg
     for i in range(num_to_avg):
         for model in MODELS:
             run_experiment(model, i)
