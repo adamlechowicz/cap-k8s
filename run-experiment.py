@@ -101,6 +101,8 @@ def run_experiment(model_name, i):
 if __name__ == "__main__":
     num_to_avg = args.num_to_avg
     for i in range(num_to_avg):
+        # shuffle the order of the models
+        random.shuffle(MODELS)
         for model in MODELS:
             run_experiment(model, i)
             # add a delay of 10 seconds between experiments
