@@ -78,7 +78,7 @@ def get_command_template(model):
         "tpch10g": TPCH_10G_COMMAND_TEMPLATE,
     }
 
-    for i in range(1, 23):
+    for i in range(1, 100):
         COMMAND_TEMPLATES[f"alibaba{i}"] = ALIBABA_BASE_COMMAND_TEMPLATE.copy()
         COMMAND_TEMPLATES[f"alibaba{i}"].append(f"local:///opt/spark/examples/job{i}.py")
 
