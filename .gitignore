@@ -6,6 +6,9 @@ __pycache__/
 # logs
 logs/
 
+# Mac OS 
+*.DS_Store
+
 # old_results
 MBP_exp/
 
