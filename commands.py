@@ -1,6 +1,6 @@
 def get_command_template(model):
-    #max_execs = 4 # for good carbon traces
-    max_execs = 5 # for medium carbon traces
+    max_execs = 4 # for good carbon traces
+    # max_execs = 5 # for medium carbon traces
     #max_execs = 6 # for bad carbon traces
     if model == "cap" or model == "danish":
         max_execs = 8
