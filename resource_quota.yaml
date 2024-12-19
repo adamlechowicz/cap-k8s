@@ -4,5 +4,5 @@ metadata:
   name: spark-cap
 spec:
   hard:
-    cpu: '400'
-    memory: 800Gi
+    cpu: '80'
+    memory: 160Gi
