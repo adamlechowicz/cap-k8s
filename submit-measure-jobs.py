@@ -35,7 +35,8 @@ ACTUAL_DATETIME = datetime.now()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name
-LAMBDA = 1/0.5  # job submission rate for Poisson process
+# LAMBDA = 1/0.5  # job submission rate for Poisson process
+LAMBDA = 3
 data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
