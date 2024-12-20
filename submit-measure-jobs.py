@@ -157,7 +157,7 @@ def maintain_jobs():
                 pod_name = identify_driver_pod(job_id)
             if job.poll() is not None:  # Process has completed
                 # look to see whether the job completed successfully
-                if job.returncode != 0:
+                if job.returncode != 0 or job_carbon_footprint[job_id] < 1:
                     # if the job failed, submit another one to make up for it
                     last_submission_time = datetime.now()
                     interarrival_time = timedelta(seconds=10)
