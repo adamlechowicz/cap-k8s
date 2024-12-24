@@ -1,9 +1,9 @@
 def get_command_template(model):
-    max_execs = 8 # for good carbon traces
-    # max_execs = 5 # for medium carbon traces
-    #max_execs = 6 # for bad carbon traces
+    max_execs = 8          # max diff for good carbon traces (CAISO, DE, ON)
+    # max_execs = 5        # med diff for medium carbon traces (DE, NSW, PJM)
+    #max_execs = 6         # smallest diff for bad carbon traces (PJM, NSW, ZA)
     if model == "cap" or model == "danish":
-        max_execs = 4
+        max_execs = 5
 
     SPARK_SUBMIT_PATH = "/home/cc/cap-k8s/spark/bin/spark-submit"
     K8S_CLUSTER_URL = "k8s://https://127.0.0.1:6443"
