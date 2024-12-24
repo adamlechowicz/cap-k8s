@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 # use argparse
 parser = argparse.ArgumentParser(description='Run experiments on Spark.')
 parser.add_argument('--num-jobs', type=int, default=100, help='Number of jobs to submit')
+parser.add_argument('--start', type=int, default=0, help='Starting index for CSV files')
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--num-to-avg', type=int, default=1, help='Number of times to average each experiment')
@@ -100,7 +101,8 @@ def run_experiment(model_name, i):
     
 if __name__ == "__main__":
     num_to_avg = args.num_to_avg
-    for i in range(num_to_avg):
+    start = args.start
+    for i in range(start, num_to_avg+start):
         # shuffle the order of the models
         random.shuffle(MODELS)
         for model in MODELS:
