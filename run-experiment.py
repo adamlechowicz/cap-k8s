@@ -12,6 +12,9 @@ parser.add_argument('--start', type=int, default=0, help='Starting index for CSV
 parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon trace to use')
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--num-to-avg', type=int, default=1, help='Number of times to average each experiment')
+parser.add_argument('--custom-path', type=str, default="", help='Custom path for saving results (default blank)')
+parser.add_argument('--submission-rate', type=float, default=2, help='Job submission rate for Poisson process')
+parser.add_argument('--lower-bound-cap', type=int, default=20, help='B parameter for CAP agent')
 args = parser.parse_args()
 
 # generate random start time
@@ -71,7 +74,7 @@ def run_experiment(model_name, i):
         print("Starting CAP agent...")
         cap_log = open("logs/cap_agent.log", "w")
         processes.append(subprocess.Popen(
-            ["python3", "/home/cc/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/home/cc/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", "20", "--max-execs", "100", "--interval", "60", "--initial-date", rounded_timestamp.isoformat()],
+            ["python3", "/home/cc/cap-k8s/cap.py", "--namespace", "spark-ns", "--res-quota-path", "/home/cc/cap-k8s/resource_quota.yaml", "--api-domain", "127.0.0.1:6066", "--min-execs", str(args.lower_bound_cap), "--max-execs", "100", "--interval", "60", "--initial-date", rounded_timestamp.isoformat()],
             stdout=cap_log,
             stderr=cap_log
         ))
@@ -80,7 +83,16 @@ def run_experiment(model_name, i):
     print("Running experiment...")
     exp_log = open(f"logs/experiment_{model_name}.log", "w")
     exp = subprocess.Popen(
-        ["python3", "/home/cc/cap-k8s/submit-measure-jobs.py", "--num-jobs", str(num_jobs), "--model-name", model_name, "--carbon-trace", args.carbon_trace, "--tag", f"{i}", "--job-type", args.job_type, "--initial-date", rounded_timestamp.isoformat()],
+        ["python3", 
+         "/home/cc/cap-k8s/submit-measure-jobs.py", 
+         "--num-jobs", str(num_jobs), 
+         "--model-name", model_name, 
+         "--carbon-trace", args.carbon_trace, 
+         "--tag", f"{i}", 
+         "--job-type", args.job_type, 
+         "--initial-date", rounded_timestamp.isoformat(), 
+         "--custom-path", args.custom_path,
+         "--submission-rate", str(args.submission_rate)],
     )
 
     # wait for the experiment to finish

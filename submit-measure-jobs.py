@@ -27,6 +27,8 @@ parser.add_argument('--carbon-trace', type=str, default="PJM.csv", help='Carbon 
 parser.add_argument('--job-type', type=str, default="tpch", help='Type of job to run')
 parser.add_argument('--tag', type=str, default="", help='Tag for the experiment')
 parser.add_argument('--initial-date', type=str, default='2022-01-31T22:00:00', help='Initial date for carbon intensity data')
+parser.add_argument('--custom-path', type=str, default="", help='Custom path for saving results (default blank)')
+parser.add_argument('--submission-rate', type=float, default=2, help='Job submission rate for Poisson process')
 args = parser.parse_args()
 
 # carbon accounting 
@@ -35,9 +37,10 @@ ACTUAL_DATETIME = datetime.now()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name
-LAMBDA = 1/0.5  # job submission rate for Poisson process
+LAMBDA = args.submission_rate
 # LAMBDA = 3
 data_file_path = args.carbon_trace
+custom_path = args.custom_path
 job_type = args.job_type
 tag = args.tag
 
@@ -212,9 +215,9 @@ def write_log_to_csv():
     # want to save the file in a folder results/{MODEL_NAME}/{JOB_TYPE}_{NUM_JOBS}_{CARBON_TRACE}/times_{tag}.csv
     # folder results and results/{MODEL_NAME} should already exist
     # JOB_TYPE_NUM_JOBS_CARBON_TRACE folder should be created if it doesn't exist, do that first
-    os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}", exist_ok=True)
+    os.makedirs(f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}{custom_path}", exist_ok=True)
     
-    filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}/times_{tag}.csv"
+    filename = f"results/{MODEL_NAME}/{job_type}_{NUM_JOBS}_{carbon_trace_name}{custom_path}/times_{tag}.csv"
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['job_id', 'start_time', 'end_time', 'carbon_footprint', 'executors']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
