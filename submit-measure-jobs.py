@@ -35,8 +35,8 @@ ACTUAL_DATETIME = datetime.now()
 
 NUM_JOBS = args.num_jobs
 MODEL_NAME = args.model_name
-# LAMBDA = 1/0.5  # job submission rate for Poisson process
-LAMBDA = 3
+LAMBDA = 1/0.5  # job submission rate for Poisson process
+# LAMBDA = 3
 data_file_path = args.carbon_trace
 job_type = args.job_type
 tag = args.tag
@@ -59,7 +59,11 @@ def submit_spark_job(job_id):
 
     # get corresponding command template
     
-    if job_type == "tpch":
+    if job_type == "alibaba":
+        # choose a random integer between 1 and 100
+        job_num = random.randint(1, 100)
+        command = COMMAND_TEMPLATES[job_type + str(job_num)]
+    else:
         # randomly pick between "100m", "1g", "10g" tpch queries
         sizeChoice = random.choice(["100m", "1g", "10g"])
         command = COMMAND_TEMPLATES[job_type + sizeChoice]
@@ -68,12 +72,6 @@ def submit_spark_job(job_id):
         queryChoice = random.choice(["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"])
         if queryChoice != "":
             command.append(queryChoice)
-    if job_type == "alibaba":
-        # choose a random integer between 1 and 100
-        job_num = random.randint(1, 100)
-        command = COMMAND_TEMPLATES[job_type + str(job_num)]
-    else:
-        command = COMMAND_TEMPLATES[job_type]
 
     process = subprocess.Popen(
         command,
