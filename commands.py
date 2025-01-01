@@ -69,7 +69,7 @@ def get_command_template(model):
 
     # Define the TPCH 10G command template
     TPCH_10G_COMMAND_TEMPLATE = TPCH_BASE_COMMAND_TEMPLATE.copy()
-    TPCH_10G_COMMAND_TEMPLATE.append("local:///opt/spark/examples/jars/1g-tpc-h-queries_2.12-1.0.jar")
+    TPCH_10G_COMMAND_TEMPLATE.append("local:///opt/spark/examples/jars/10g-tpc-h-queries_2.12-1.0.jar")
 
     COMMAND_TEMPLATES = {
         "sparktc": SPARKTC_COMMAND_TEMPLATE,
