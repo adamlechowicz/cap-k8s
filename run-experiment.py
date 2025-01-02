@@ -41,7 +41,7 @@ except FileNotFoundError:
     print(f"Carbon trace file {args.carbon_trace} not found.")
     exit(1)
 
-MODELS = ["default", "cap", "danish", "decima"]
+MODELS = ["default", "cap", "decima"]
 processes = []
 
 def run_experiment(model_name, i):
