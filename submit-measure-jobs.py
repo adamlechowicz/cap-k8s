@@ -173,7 +173,7 @@ def maintain_jobs():
                     del active_jobs[job_id]
 
         # Submit new jobs based on interarrival time
-        if datetime.now() - last_submission_time > interarrival_time and jobs_submitted < NUM_JOBS:
+        if datetime.now() - last_submission_time > interarrival_time:
             print("Active jobs:", len(active_jobs), " Submitting one new job...")
             new_job = submit_spark_job(i)
             active_jobs[i] = new_job
